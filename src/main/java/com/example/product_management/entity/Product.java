@@ -1,0 +1,149 @@
+package com.example.product_management.entity;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*; // ⬅ Import validation annotations
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+/**
+ * Product Entity - Đại diện cho bảng "products" trong database.
+ * Bao gồm validation để kiểm soát dữ liệu đầu vào.
+ */
+@Entity
+@Table(name = "products")
+public class Product {
+
+    // ============================
+    // ID tự tăng – Primary Key
+    // ============================
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    // ============================
+    // PRODUCT CODE VALIDATION
+    // ============================
+    @NotBlank(message = "Product code is required")
+    @Size(min = 3, max = 20, message = "Product code must be 3–20 characters")
+    @Pattern(regexp = "^P\\d{3,}$",
+            message = "Product code must start with 'P' followed by at least 3 digits")
+    @Column(name = "product_code", unique = true, nullable = false, length = 20)
+    private String productCode;
+
+    // ============================
+    // NAME VALIDATION
+    // ============================
+    @NotBlank(message = "Product name is required")
+    @Size(min = 3, max = 100, message = "Name must be 3–100 characters")
+    @Column(nullable = false, length = 100)
+    private String name;
+
+    // ============================
+    // PRICE VALIDATION
+    // ============================
+    @NotNull(message = "Price is required")
+    @DecimalMin(value = "0.01", message = "Price must be greater than 0")
+    @DecimalMax(value = "999999.99", message = "Price is too high")
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal price;
+
+    // ============================
+    // QUANTITY VALIDATION
+    // ============================
+    @NotNull(message = "Quantity is required")
+    @Min(value = 0, message = "Quantity cannot be negative")
+    @Column(nullable = false)
+    private Integer quantity;
+
+    // ============================
+    // CATEGORY VALIDATION
+    // ============================
+    @NotBlank(message = "Category is required")
+    @Column(length = 50)
+    private String category;
+
+    // ============================
+    // DESCRIPTION – optional
+    // ============================
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
+    // ============================
+    // CREATED TIMESTAMP
+    // ============================
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    // ============================
+    // Constructors
+    // ============================
+    public Product() {}
+
+    public Product(String productCode, String name, BigDecimal price, Integer quantity,
+                   String category, String description) {
+        this.productCode = productCode;
+        this.name = name;
+        this.price = price;
+        this.quantity = quantity;
+        this.category = category;
+        this.description = description;
+    }
+
+    // ============================
+    // Auto-set createdAt before saving
+    // ============================
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
+
+    // ============================
+    // Getters & Setters
+    // ============================
+    public Long getId() { return id; }
+
+    public void setId(Long id) { this.id = id; }
+
+    public String getProductCode() { return productCode; }
+
+    public void setProductCode(String productCode) { this.productCode = productCode; }
+
+    public String getName() { return name; }
+
+    public void setName(String name) { this.name = name; }
+
+    public BigDecimal getPrice() { return price; }
+
+    public void setPrice(BigDecimal price) { this.price = price; }
+
+    public Integer getQuantity() { return quantity; }
+
+    public void setQuantity(Integer quantity) { this.quantity = quantity; }
+
+    public String getCategory() { return category; }
+
+    public void setCategory(String category) { this.category = category; }
+
+    public String getDescription() { return description; }
+
+    public void setDescription(String description) { this.description = description; }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    // ============================
+    // ToString (giúp debug)
+    // ============================
+    @Override
+    public String toString() {
+        return "Product{" +
+                "id=" + id +
+                ", productCode='" + productCode + '\'' +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                ", quantity=" + quantity +
+                ", category='" + category + '\'' +
+                '}';
+    }
+}
