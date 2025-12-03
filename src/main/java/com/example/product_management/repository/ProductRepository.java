@@ -28,8 +28,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByPriceBetween(BigDecimal minPrice, BigDecimal maxPrice);
     
     List<Product> findByCategoryOrderByPriceAsc(String category);
-    
+
     boolean existsByProductCode(String productCode);
+
+    boolean existsByProductCodeAndIdNot(String productCode, Long id);
     
     // All basic CRUD methods inherited from JpaRepository:
     // - findAll()

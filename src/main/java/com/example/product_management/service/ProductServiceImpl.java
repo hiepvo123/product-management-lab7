@@ -84,4 +84,15 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findByNameContaining(keyword, pageable);
     }
 
+    @Override
+    public boolean isProductCodeDuplicate(Product product) {
+        String productCode = product.getProductCode();
+
+        if (product.getId() == null) {
+            return productRepository.existsByProductCode(productCode);
+        }
+
+        return productRepository.existsByProductCodeAndIdNot(productCode, product.getId());
+    }
+
 }

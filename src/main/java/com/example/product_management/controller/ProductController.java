@@ -136,19 +136,23 @@ public String searchProducts(
         Model model,
         RedirectAttributes redirectAttributes) {
 
-    if (result.hasErrors()) {
-        return "product-form";   // Quay lại form nếu lỗi
-    }
+        if (productService.isProductCodeDuplicate(product)) {
+            result.rejectValue("productCode", "duplicate", "Product code already exists");
+        }
 
-    try {
-        productService.saveProduct(product);
-        redirectAttributes.addFlashAttribute("message", "Product saved successfully!");
-    } catch (Exception e) {
-        redirectAttributes.addFlashAttribute("error", "Error: " + e.getMessage());
-    }
+        if (result.hasErrors()) {
+            return "product-form";   // Quay lại form nếu lỗi
+        }
 
-    return "redirect:/products";
-}
+        try {
+            productService.saveProduct(product);
+            redirectAttributes.addFlashAttribute("message", "Product saved successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error: " + e.getMessage());
+        }
+
+        return "redirect:/products";
+    }
 
     
     // Delete product
