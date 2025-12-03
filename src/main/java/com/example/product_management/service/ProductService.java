@@ -30,6 +30,9 @@ public interface ProductService {
                              BigDecimal minPrice,
                              BigDecimal maxPrice);
 
+
+    boolean isProductCodeDuplicate(Product product);
+
    
     List<Product> getProductsByCategory(String category);
 
